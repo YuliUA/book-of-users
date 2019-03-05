@@ -7,7 +7,7 @@ const router = express.Router();
 const validateUser = require('../validation/validation')
 
 // 1
-router.post('/createNewUser', async function(req, res) {
+router.post('/createNewUser', function(req, res) {
     try{
         const usersJSON = JSON.parse( fs.readFileSync('./db/users.json', 'utf-8'))
         let users = usersJSON.users;
@@ -24,13 +24,13 @@ router.post('/createNewUser', async function(req, res) {
         fs.writeFileSync('./db/users.json', JSON.stringify( usersJSON ) );
         return res.json(users)
     } catch (err){
-        // console.log(`newUser error: ${err}`)
+        console.log(`newUser error: ${err}`)
         return res.status(err.status||500).json(err)
     }
 });
 
 // 2
-router.get('/allUsers', async function(req, res) {
+router.get('/allUsers', function(req, res) {
     try{
         const usersJSON = JSON.parse( fs.readFileSync('./db/users.json', 'utf-8'))
         return res.json( usersJSON );
@@ -41,7 +41,7 @@ router.get('/allUsers', async function(req, res) {
 });
 
 // 3
-router.delete('/:id',async function(req, res) {
+router.delete('/:id', function(req, res) {
     try{
         const usersJSON = JSON.parse( fs.readFileSync('./db/users.json', 'utf-8'))
         let users = usersJSON.users;
@@ -58,7 +58,7 @@ router.delete('/:id',async function(req, res) {
 });
 
 // 4
-router.put('/:id',async function (req, res) {
+router.put('/', function (req, res) {
     // req.body.id should contain id of user for edit
     // all other parameters will be data that should be added
     // for example ---->>>> let {id, ...data} = req.body
@@ -67,6 +67,26 @@ router.put('/:id',async function (req, res) {
     // update fields (replace the value)
     // and save new data
     // don't forget about validation, etc
+    try{
+        const usersJSON = JSON.parse(fs.readFileSync('./db/users.json', 'utf-8'))
+        let users=usersJSON.users;
+        const id = req.body.id
+        users=users.filter(u=> u.id.toString()===id)
+        
+        users[0].firstname = req.body.firstname
+        users[0].lastname = req.body.lastname
+        users[0].email = req.body.email
+        users[0].password = req.body.password
+
+        validateUser(req.body);
+
+        fs.writeFileSync('./db/users.json', JSON.stringify( usersJSON ) );
+    
+        return  res.json(users)
+    } catch (err) {
+        return  res.status(err.status||500).json(err)
+    }
+
    
 });
 
