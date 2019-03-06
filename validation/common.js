@@ -19,9 +19,14 @@ const isEmpty = function(value){
    || (typeof value === 'string' && value.trim().length === 0);
 
 }
-
+const isValidTime = function(time){
+    // time format YYYY-MM-DD,HH:MM
+    let result = /^\d\d\d\d-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1]),[01]?[0-9]|2[0-3]:[0-5][0-9]$/.test(time);
+    return result
+}
 module.exports={
     isEmail,
     isValidPassword,
-    isEmpty
+    isEmpty,
+    isValidTime
 }
